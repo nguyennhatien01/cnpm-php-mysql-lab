@@ -1,0 +1,32 @@
+
+1. App Container (Container Ứng dụng)
+
+• Định nghĩa: Là một môi trường ảo hóa độc lập, gọn nhẹ chứa toàn bộ mã nguồn ứng dụng (PHP), cấu hình môi trường và máy chủ Web (ví dụ: Apache hoặc Nginx).
+• Vai trò:
+	• Tiếp nhận các yêu cầu (HTTP Request) từ trình duyệt của người dùng gửi tới.
+	• Thực thi, biên dịch các tệp tin script PHP để xử lý logic nghiệp vụ.
+	• Kết nối với Cơ sở dữ liệu để lấy thông tin, sau đó trả về kết quả (giao diện HTML/CSS) hiển thị lên màn hình người dùng.
+
+2. Database Container (Container Cơ sở dữ liệu)
+
+• Định nghĩa: Là một môi trường cô lập chuyên biệt chỉ dùng để chạy Hệ quản trị cơ sở dữ liệu (trong bài lab này là MySQL).
+• Vai trò:
+	• Lưu trữ toàn bộ dữ liệu có cấu trúc của hệ thống một cách an toàn (ví dụ: danh sách công việc, mô tả, độ ưu tiên priority, trạng thái hoàn thành).
+	• Tiếp nhận các câu lệnh truy vấn dữ liệu (SELECT, INSERT, UPDATE, DELETE) từ App Container gửi sang để xử lý và trả lại kết quả thô cho ứng dụng.
+
+3. Port Mapping (Ánh xạ cổng)
+
+• Định nghĩa: Là cơ chế mở và kết nối một cổng mạng từ máy tính vật lý của bạn (Máy Host) vào cổng mạng nội bộ của Container Docker.
+• Vai trò: Bản chất các container chạy trong một mạng ảo cô lập của Docker, máy tính bên ngoài không thể truy cập trực tiếp. Port Mapping (ví dụ 8080:80) giúp mở một "cánh cửa" trung gian. Khi bạn gõ http://localhost:8080 trên trình duyệt máy thật, Docker sẽ tự động chuyển tiếp tín hiệu đó vào cổng 80 (cổng mặc định của Web Server Apache) đang chạy ẩn sâu bên trong App Container.
+
+4. Environment Variables (Biến môi trường)
+
+• Định nghĩa: Là các cặp giá trị (Tên = Biến) được định nghĩa ở bên ngoài mã nguồn (thường nằm trong file .env) và được truyền vào bên trong container khi hệ thống khởi động.
+• Vai trò:
+	• Bảo mật: Giúp ẩn đi các thông tin nhạy cảm (như mật khẩu cơ sở dữ liệu root, mật khẩu kết nối) thay vì viết trực tiếp (hardcode) vào mã nguồn PHP, tránh rò rỉ khi đẩy lên GitHub công khai.
+	• Linh hoạt: Giúp lập trình viên dễ dàng thay đổi cấu hình hệ thống (đổi tên database, đổi cổng kết nối) chỉ bằng cách sửa file cấu hình .env mà không cần phải can thiệp hay chỉnh sửa lại bất kỳ dòng code logic nào.
+
+5. Volume (Ổ đĩa ảo lưu trữ dữ liệu)
+
+• Định nghĩa: Là một cơ chế gắn (mount) một thư mục từ máy vật lý hoặc một vùng nhớ được Docker quản lý trực tiếp vào bên trong đường dẫn lưu trữ của container.
+• Vai trò: Container Docker có đặc tính "tạm thời" (ephemeral) — khi container bị xóa hoặc hạ xuống (docker compose down), mọi dữ liệu phát sinh bên trong nó sẽ biến mất hoàn toàn. Volume đóng vai trò như một "ổ cứng gắn ngoài", giúp lưu trữ dữ liệu bền vững. Mọi dữ liệu mà MySQL tạo ra sẽ được đồng bộ thẳng vào Volume nằm trên máy thật. Nhờ vậy, ngay cả khi bạn xóa container, dữ liệu công việc của bạn vẫn được giữ lại nguyên vẹn cho lần chạy kế tiếp.
